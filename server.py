@@ -1,7 +1,7 @@
 import socket 
 from threading import Thread
 import os
-
+from hashlib import sha256
 BUFFER_SIZE = 4096
 SEPARATOR = "<SEPARATOR>"
 filename='dummy.txt'
@@ -15,14 +15,11 @@ def new_client(client_socket, addr):
         client_socket.send(f'{filename}{SEPARATOR}{filesize}'.encode())
 
         with open(filename,'rb') as f:
-            while True:
-                bytes_read = f.read(BUFFER_SIZE)
-                if not bytes_read:
-                    print('Entre')
-                    # We're donde here
-                    break
-                client_socket.sendall(bytes_read)
-    client_socket.close()
+            sha = f.read()
+            security = sha256(sha).hexdigest()
+            client_socket.sendall(security.encode())
+            client_socket.sendfile(f,0)
+        client_socket.close()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '127.0.0.1'
