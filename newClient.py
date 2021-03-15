@@ -29,8 +29,5 @@ class NewClient(Thread):
         self.client_socket.close()
 
 
-    def join(self):
-        Thread.join(self)
-        return self._join()
         
         
