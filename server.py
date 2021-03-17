@@ -5,7 +5,7 @@ from hashlib import sha256
 from newClient import NewClient
 BUFFER_SIZE = 4096
 SEPARATOR = "<SEPARATOR>"
-filename='dummy.txt'
+filename='big.txt'
 filesize= os.path.getsize(filename)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '0.0.0.0'
@@ -15,8 +15,7 @@ print ('Waiting for clients')
 i= 0
 s.bind((host,port))
 s.listen()
-b = Barrier(2)
-
+b = Barrier(1)
 pruebas = []
 try:
     while True:

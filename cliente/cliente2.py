@@ -17,11 +17,8 @@ def createClients():
         filename = s.recv(BUFFER_SIZE)
         integrity = s.recv(BUFFER_SIZE).decode()
         with open(filename,'wb') as f:
-            while True:
-                bytes_read = s.recv(BUFFER_SIZE)
-                if bytes_read == b'':
-                    print('Voy a salir ')
-                    break
+            for i in range(64000):
+                bytes_read = s.recv(4096)
                 f.write(bytes_read)
         with open(filename,'rb') as j:
             sha = j.read()
