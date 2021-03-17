@@ -8,6 +8,7 @@ class NewClient(Thread):
         self.filename = filename
         self.name = name
         self.barrier = barrier
+        self.filesize = filesize
     
 
     def run(self):
@@ -16,19 +17,22 @@ class NewClient(Thread):
             msg = self.client_socket.recvmsg(1024)
             print(self.addr, '>>',msg,'>>', self.name)
             number_bytes = 0
-            number_bytes += self.client_socket.send(f'{self.name}'.encode())
+            # number_bytes += self.client_socket.send(f'{self.name}'.encode())
             with open(self.filename,'rb') as f:
+                
                 sha= f.read()
                 security = sha256(sha).hexdigest()
-                print(security.encode())
-                number_bytes += self.client_socket.send(security.encode())
-                number_bytes+= self.client_socket.sendfile(f,0)
-            
-
-            msg = self.client_socket.recv(1024)
+                data = f'{self.name}<>{security}<>{self.filesize}'
+                number_bytes=self.client_socket.send(f'{data}'.encode())
+                msg = self.client_socket.recv(1024).decode()
+                print(msg)
+                if msg:
+                    number_bytes+= self.client_socket.sendfile(f,0)
+            msg = self.client_socket.recv(1024).decode()
             print(msg)
             self.client_socket.close()
         except Exception as e:
+            self.client_socket.close()
             print(e)
 
         
