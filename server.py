@@ -3,6 +3,7 @@ from threading import Thread, Barrier
 import os
 from hashlib import sha256
 from newClient import NewClient
+from datetime import datetime
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '0.0.0.0'
 port = 65432
