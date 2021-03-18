@@ -1,5 +1,7 @@
 from threading import Thread
 from hashlib import sha256
+from time import perf_counter_ns
+from math import ceil
 class NewClient(Thread):
     def __init__ (self, client_socket,addr,filename,name,filesize,barrier):
         Thread.__init__(self)
@@ -13,13 +15,13 @@ class NewClient(Thread):
 
     def run(self):
         try:
+            print('Hola')
             self.barrier.wait()
+            tic = perf_counter_ns()
             msg = self.client_socket.recvmsg(1024)
             print(self.addr, '>>',msg,'>>', self.name)
             number_bytes = 0
-            # number_bytes += self.client_socket.send(f'{self.name}'.encode())
             with open(self.filename,'rb') as f:
-                
                 sha= f.read()
                 security = sha256(sha).hexdigest()
                 data = f'{self.name}<>{security}<>{self.filesize}'
@@ -28,9 +30,26 @@ class NewClient(Thread):
                 print(msg)
                 if msg:
                     number_bytes+= self.client_socket.sendfile(f,0)
-            msg = self.client_socket.recv(1024).decode()
-            print(msg)
+            houston = self.client_socket.recv(1024).decode()
+            print(houston)
             self.client_socket.close()
+            toc = perf_counter_ns()
+            performance= toc - tic
+            name_file= self.name[:self.name.index('.')]
+            print(performance)
+            with open(f'logs/{name_file}.txt', 'w+') as j:
+                j.write(f'time:{performance} \n')
+                j.write(f'nombre_enviado:{self.name}\n')
+                identifier= self.name.replace('client','')
+                identifier = identifier.replace('.txt','')
+                j.write(f'cliente:{identifier}\n')
+                j.write(f'satisfactorio:{houston}\n')
+                j.write(f'tiempo:{performance}ns\n')
+                j.write(f'numbytes:{number_bytes}\n')
+                j.write(f'num_paquetes:{ceil(number_bytes/1024)}')
+
+                pass
+            
         except Exception as e:
             self.client_socket.close()
             print(e)
