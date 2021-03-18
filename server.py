@@ -4,10 +4,25 @@ import os
 from hashlib import sha256
 from newClient import NewClient
 from datetime import datetime
+from os import listdir
+from os.path import isfile, join
+from datetime import datetime
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '0.0.0.0'
 port = 65432
 i= 0
+
+def joinFiles():
+    mypath= 'logs/'
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    now = datetime.now()
+    dt_string = now.strftime("%Y-%m-%d-%H-%M-%S")
+    with open (f'{dt_string}.txt','a+') as logmaster:
+        for client_log in onlyfiles:
+            with open(f'logs/{client_log}','r') as f:
+                logmaster.write(f.read())
+
+
 numClients = int(input('Cuantos clientes simultaneos? \n'))
 # filename = 'big.txt' if filesend ==1 else 'file.txt'
 filename = input ('Escriba el nombre del archivo que sea enviar \n Ejemplo: prueba.txt \n')
@@ -28,6 +43,6 @@ try:
         i+=1
         prueba =NewClient(c,addr,filename,name,filesize,b).start()
         pruebas.append(prueba)
-except Exception as e:
-    print(e)
+except KeyboardInterrupt as e:
+    joinFiles()
     s.close()
