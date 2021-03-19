@@ -1,6 +1,6 @@
 from threading import Thread
 from hashlib import sha256
-from time import perf_counter_ns
+from time import perf_counter
 from math import ceil
 class NewClient(Thread):
     def __init__ (self, client_socket,addr,filename,name,filesize,barrier):
@@ -17,7 +17,7 @@ class NewClient(Thread):
         try:
             print('Hola')
             self.barrier.wait()
-            tic = perf_counter_ns()
+            tic = perf_counter()
             msg = self.client_socket.recvmsg(1024)
             print(self.addr, '>>',msg,'>>', self.name)
             number_bytes = 0
@@ -33,10 +33,9 @@ class NewClient(Thread):
             houston = self.client_socket.recv(1024).decode()
             print(houston)
             self.client_socket.close()
-            toc = perf_counter_ns()
+            toc = perf_counter()
             performance= toc - tic
             name_file= self.name[:self.name.index('.')]
-            print(performance)
             with open(f'logs/{name_file}.txt', 'w+') as j:
                 j.write(f'time:{performance} \n')
                 j.write(f'nombre_enviado:{self.name}\n')
