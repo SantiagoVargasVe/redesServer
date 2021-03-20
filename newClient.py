@@ -26,6 +26,24 @@ class NewClient(Thread):
                 security = sha256(sha).hexdigest()
                 data = f'{self.name}<>{security}<>{self.filesize}'
                 number_bytes=self.client_socket.send(f'{data}'.encode())
+            
+            with open(self.filename,'rb') as f:
+
+                act = f.read(4096)
+                while act:
+                    self.client_socket.sendall(act)
+                    confirm = self.client_socket.recv(2048)
+                    print(confirm.decode())
+                    sha_act = sha256(act).hexdigest()
+                    while not sha_act == confirm.decode():
+                        print('No son iguales')
+                        self.client_socket.sendall(b'INCORRECT')
+                        self.client_socket.sendall(act)
+                        confirm= self.client_socket.recv(2048)
+                    print('Si somos iguales')
+                    self.client_socket.sendall(b'CORRECT')
+                    act = f.read(4096)
+
                 msg = self.client_socket.recv(1024).decode()
                 print(msg)
                 if msg:

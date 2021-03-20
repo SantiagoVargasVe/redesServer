@@ -1,7 +1,0 @@
-time:0.004564522999999099 
-nombre_enviado:client0.txt
-cliente:0
-satisfactorio:SUCCESS
-tiempo:0.004564522999999099ns
-numbytes:292
-num_paquetes:1
