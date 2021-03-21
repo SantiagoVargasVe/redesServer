@@ -68,7 +68,7 @@ def createClients(numConexiones,b):
         toc = perf_counter_ns()
         performance = toc - tic 
     with open(f'{namelog}.txt','w+') as n:
-        n.write('nombre_archivo;tamaño_archivo;nombre_cliente;entrega_exitosa;tiempo;num_bytes;num_paquetes\n')
+        n.write('nombre_archivo;tamano_archivo;nombre_cliente;entrega_exitosa;tiempo;num_bytes;num_paquetes\n')
         n.write(f'{filename};{filesize};{namelog};{check_integrity};{performance};{numbytes};{2}\n')
 
     b.wait()
