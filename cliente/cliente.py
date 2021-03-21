@@ -43,12 +43,14 @@ def createClients(numConexiones,b):
         extension= filename[filename.index('.'):]
         namelog = filename[:filename.index('.')]
         filesize= int(msg1[2])
+        act_count= 0
         num_iterations= math.ceil(filesize/4096)
         numbytes +=s.send('RECV_DATA'.encode())
         with open(f'archivosRecibidos/{namelog}-Prueba-{numConexiones}{extension}','wb') as f:
-            for i in range(num_iterations):
+            while not act_count == filesize:
                 bytes_read = s.recv(4096)
                 f.write(bytes_read)
+                act_count += len(bytes_read)
         with open(f'archivosRecibidos/{namelog}-Prueba-{numConexiones}{extension}','rb') as j:
             sha = j.read()
             security= sha256(sha).hexdigest()
