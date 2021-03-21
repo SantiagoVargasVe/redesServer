@@ -36,17 +36,11 @@ class NewClient(Thread):
             toc = perf_counter()
             performance= toc - tic
             name_file= self.name[:self.name.index('.')]
-            with open(f'logs/{name_file}.txt', 'w+') as j:
-                j.write(f'time:{performance} \n')
-                j.write(f'nombre_enviado:{self.name}\n')
+            with open(f'logs/{name_file}.csv', 'w+') as j:
+                j.write('tiempo;nombre_enviado;cliente;satisfactorio;numbytes;paquetes \n')
                 identifier= self.name.replace('client','')
                 identifier = identifier.replace('.txt','')
-                j.write(f'cliente:{identifier}\n')
-                j.write(f'satisfactorio:{houston}\n')
-                j.write(f'tiempo:{performance}ns\n')
-                j.write(f'numbytes:{number_bytes}\n')
-                j.write(f'num_paquetes:{ceil(number_bytes/1024)}')
-
+                j.write(f'{performance};{self.name};{identifier};{houston};{number_bytes};{ceil(number_bytes/1024)}\n')
                 pass
             
         except Exception as e:

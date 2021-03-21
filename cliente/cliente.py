@@ -7,6 +7,7 @@ from os import listdir
 from os.path import isfile, join
 from time import perf_counter_ns
 from datetime import datetime
+import pandas as pd 
 HOST = '127.0.0.1'  # The server's hostname or IP address
 PORT = 65432        # The port used by the server
 integrity=''
@@ -15,13 +16,11 @@ def joinLogs():
     mypath= './'
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     onlyfiles.remove('cliente.py')
+
     now = datetime.now()
     dt_string = now.strftime("%Y-%m-%d-%H-%M-%S")
-    with open (f'{dt_string}.txt','a+') as logmaster:
-        for client_log in onlyfiles:
-            with open(client_log,'r') as f:
-                logmaster.write(f.read())
-
+    combined = pd.concat([pd.read_csv(f, delimiter=';', encoding='UTF-8') for f in onlyfiles])
+    combined.to_csv(f'{dt_string}.csv')
 
 def createClients(numConexiones,b):
     namelog = ''
@@ -69,13 +68,8 @@ def createClients(numConexiones,b):
         toc = perf_counter_ns()
         performance = toc - tic 
     with open(f'{namelog}.txt','w+') as n:
-        n.write(f'nombre_archivo:{filename}\n')
-        n.write(f'tamaño_archivo:{filesize}')
-        n.write(f'nombre_cliente:{namelog}\n')
-        n.write(f'Entrega_exitosa:{check_integrity}\n')
-        n.write(f'Tiempo:{performance}ns \n')
-        n.write(f'Num_bytes:{numbytes} \n')
-        n.write(f'num_paquetes:{2}\n')
+        n.write('nombre_archivo;tamaño_archivo;nombre_cliente;entrega_exitosa;tiempo;num_bytes;num_paquetes\n')
+        n.write(f'{filename};{filesize};{namelog};{check_integrity};{performance};{numbytes};{2}\n')
 
     b.wait()
 
